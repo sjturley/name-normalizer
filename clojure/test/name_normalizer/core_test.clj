@@ -7,17 +7,17 @@
     (is (= "" (normalize ""))))
   (testing "returns single word name"
     (is (= "Plato" (normalize "Plato"))))
-  (testing "swapsFirstAndLastNames"
+  (testing "swaps first and last names"
     (is (= "Murakami, Haruki" (normalize "Haruki Murakami"))))
-  (testing "trimsLeadingAndTrailingWhitespace"
+  (testing "trims leading and trailing whitespace"
     (is (= "Boi, Big" (normalize "   Big Boi   "))))
-  (testing "initializesMiddleName"
+  (testing "initializes middle name"
     (is (= "Thoreau, Henry D." (normalize "Henry David Thoreau"))))
-  (testing "doesNotInitializeOneLetterMiddleName"
+  (testing "does not initialize one letter middle name"
     (is (= "Truman, Harry S" (normalize "Harry S Truman"))))
-  (testing "initializesEachOfMultipleMiddleNames"
+  (testing "initializes each of multiple middle names"
     (is (= "Louis-Dreyfus, Julia S. E." (normalize "Julia Scarlett Elizabeth Louis-Dreyfus"))))
-  (testing "appendsSuffixesToEnd"
+  (testing "appends suffixes to end"
     (is (= "King, Martin L., Jr." (normalize "Martin Luther King, Jr."))))
-  (testing "throwsWhenNameContainsTwoCommas"
+  (testing "throws when name contains two commas"
     (is (thrown? IllegalArgumentException (normalize "Thurston, Howell, III")))))
