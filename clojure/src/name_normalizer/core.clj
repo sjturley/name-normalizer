@@ -4,6 +4,7 @@
 (defn- initial [name]
   (str " " (first name) (if (= 1 (count name)) "" ".")))
 
+;; use threading operator
 (defn- middle-initials [parts]
   (string/join (map initial (butlast (rest parts)))))
 
