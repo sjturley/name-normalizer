@@ -1,15 +1,19 @@
 (ns name-normalizer.core
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as s]))
 
 (defn- initial [name]
   (str " " (first name) (if (= 1 (count name)) "" ".")))
 
 ;; use threading operator
 (defn- middle-initials [parts]
-  (string/join (map initial (butlast (rest parts)))))
+  (->>  parts
+        (rest)
+        (butlast)
+        (map initial)
+        (s/join)))
 
 (defn- name-and-suffix [name]
-  (let [parts (string/split name #",")]
+  (let [parts (s/split name #",")]
     [(first parts)
      (if (empty? (second parts)) "" (str "," (second parts)))]))
 
@@ -22,8 +26,8 @@
 
 (defn normalize [name]
   (throw-if-too-many-commas name)
-  (let [[name suffix] (name-and-suffix (string/trim name))
-        parts (string/split name #" ")]
+  (let [[name suffix] (name-and-suffix (s/trim name))
+        parts (s/split name #" ")]
     (if (mononym? parts)
       name
       (str (last parts) ", " (first parts) (middle-initials parts) suffix))))
