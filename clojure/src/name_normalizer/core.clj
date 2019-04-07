@@ -4,7 +4,6 @@
 (defn- initial [name]
   (str " " (first name) (if (= 1 (count name)) "" ".")))
 
-;; use threading operator
 (defn- middle-initials [parts]
   (->>  parts
         (rest)
@@ -12,22 +11,33 @@
         (map initial)
         (s/join)))
 
-(defn- name-and-suffix [name]
+(defn- split-name-and-suffix [name]
   (let [parts (s/split name #",")]
-    [(first parts)
-     (if (empty? (second parts)) "" (str "," (second parts)))]))
+    {:name (first parts)
+     :suffix (if (empty? (second parts)) "" (str "," (second parts)))}))
+
+(defn- split-base-name [parsed]
+  (let [parts (s/split (:name parsed) #" ")]
+    (merge parsed 
+      {:first (first parts)
+      :last (if (= 1 (count parts)) nil (last parts))
+      :middle-initials (middle-initials parts)})))
+
+(defn- parse [name]
+  (-> name
+      (split-name-and-suffix)
+      (split-base-name)))
 
 (defn- throw-if-too-many-commas [name]
   (if (> (count (filter #(= \, %) name)) 1)
     (throw (IllegalArgumentException.))))
 
-(defn- mononym? [parts]
-  (= 1 (count parts)))
+(defn- mononym? [parsed]
+  (not (:last parsed)))
 
 (defn normalize [name]
   (throw-if-too-many-commas name)
-  (let [[name suffix] (name-and-suffix (s/trim name))
-        parts (s/split name #" ")]
-    (if (mononym? parts)
+  (let [parsed (parse (s/trim name))]
+    (if (mononym? parsed)
       name
-      (str (last parts) ", " (first parts) (middle-initials parts) suffix))))
+      (str (:last parsed) ", " (:first parsed) (:middle-initials parsed) (:suffix parsed)))))
