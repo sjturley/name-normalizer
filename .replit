@@ -1,0 +1,2 @@
+run = "mvn test"
+language = "java"
